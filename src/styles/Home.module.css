@@ -39,6 +39,11 @@
   font-size: 14px;
 }
 
+.icons {
+  display: flex;
+  align-items: center;
+}
+
 .col2 {
   position: relative;
   padding: 0 30px;
