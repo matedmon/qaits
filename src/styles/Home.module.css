@@ -1,0 +1,168 @@
+.container {
+  width: 95%;
+  margin: auto;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 20% 80%;
+  background-color: white;
+  box-shadow: rgba(59, 59, 128, 0.2) 0px 7px 29px 0px;
+  border-radius: 8px;
+  width: 100%;
+  min-height: 80vh;
+  margin: 30px 0;
+  padding: 30px 0;
+}
+
+.col {
+  border-right: solid 1px #ddd;
+  padding: 0 20px 0 30px;
+}
+
+.col p {
+  margin: 0;
+}
+
+.fileList {
+  color: #646c7f;
+  margin-top: 16px;
+}
+
+.file {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  padding: 8px 0;
+  margin-right: 10px;
+  font-size: 14px;
+}
+
+.col2 {
+  position: relative;
+  padding: 0 30px;
+}
+
+.btnContainer {
+  width: 90%;
+  align-self: center;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* ================== file info =================== */
+
+.col2 .subTitle {
+  margin: 0 0 40px 0;
+}
+
+.fileGrid {
+  display: grid;
+  grid-template-columns: 40% 60%;
+  margin-bottom: 40px;
+}
+
+.update {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #646c7f;
+  font-size: 14px;
+  border-bottom: solid 1px #ccc;
+}
+
+.title {
+  font-weight: bold;
+}
+
+.filename,
+.fileErrors {
+  display: flex;
+  align-items: center;
+  padding-right: 20px;
+}
+
+.filename p {
+  margin: 0 12px 0 0;
+}
+
+.fileErrors p {
+  color: red;
+  margin: 0 12px 0 0;
+}
+
+.uploadBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  height: 40px;
+  background-color: #0073cf;
+  color: white;
+  float: right;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.uploadBtn:hover {
+  box-shadow: rgba(59, 59, 128, 0.2) 0px 7px 29px 0px;
+}
+
+.fileInfo {
+  /* border-radius: 8px; */
+  box-shadow: rgba(59, 59, 128, 0.2) 0px 7px 29px 0px;
+  padding: 20px;
+  margin-top: 30px;
+}
+
+.table {
+  width: 100%;
+  margin-top: 20px;
+  border: none;
+  padding: 0;
+  font-size: 14px;
+  margin-bottom: 20px;
+  border-collapse: collapse;
+}
+
+.table tbody tr {
+  border-bottom: solid 1px #ccc;
+  margin: 8px 0;
+}
+
+.table tbody tr:hover {
+  background-color: #f2f2f2;
+}
+
+.table th,
+td {
+  text-align: start;
+  padding: 12px;
+}
+
+.actionBtns {
+  display: flex;
+  float: right;
+  align-items: "center";
+}
+
+.actionBtns p {
+  margin: 0;
+}
+
+p.editBtn {
+  color: #0073cf;
+  margin-right: 20px;
+  font-size: small;
+  cursor: pointer;
+}
+
+.deleteBtn {
+  color: red;
+  font-size: small;
+  cursor: pointer;
+}

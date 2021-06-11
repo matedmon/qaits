@@ -1,0 +1,20 @@
+.button {
+  height: 30vh;
+  border: dashed 1px #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: #646c7f;
+  cursor: pointer;
+}
+
+.button p,
+em {
+  text-align: center;
+  display: block;
+}
+
+.button p {
+  font-size: 20px;
+}
