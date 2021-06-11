@@ -1,0 +1,122 @@
+.content {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  padding-bottom: 100px;
+}
+
+.container {
+  width: 60%;
+  margin: auto;
+}
+
+.title {
+  margin-top: 50px;
+  text-align: center;
+}
+
+.form {
+  margin-top: 40px;
+}
+
+.form input {
+  width: 99%;
+  height: 35px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+.form p {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+}
+
+.form label {
+  font-size: 14px;
+}
+
+.dropdownWrapper {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.dropdownItem {
+  height: 35px;
+  margin-top: 8px;
+  margin-bottom: 4px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  outline: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px;
+}
+
+.dropdownWrapper:hover .dropdown {
+  visibility: visible;
+}
+
+.dropdown {
+  margin: 0;
+  padding: 0;
+  border: 1px solid #ccc;
+  background-color: white;
+  z-index: 2;
+  visibility: hidden;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+
+.dropdown .dropdownItem {
+  margin-top: 0;
+  margin-bottom: 0;
+  border: none;
+  color: black;
+}
+
+.dropdown .dropdownItem p {
+  color: black;
+}
+
+.dropdown .dropdownItem:hover {
+  background-color: #0073cf;
+}
+
+.dropdown .dropdownItem:hover p {
+  color: white;
+}
+
+.submitBtn {
+  background-color: #0073cf;
+  color: white;
+  height: 40px;
+  width: 40%;
+  float: right;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submitBtn:hover {
+  box-shadow: rgba(59, 59, 128, 0.2) 0px 7px 29px 0px;
+}
+
+@media only screen and (max-width: 800px) {
+  .container {
+    width: 80%;
+  }
+
+  .submitBtn {
+    width: 100%;
+  }
+}
