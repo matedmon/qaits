@@ -8,9 +8,8 @@ import IconButton from "@material-ui/core/IconButton";
 
 const PersonDetail = ({ data, errors }) => {
   //identifying errors on the table
-
   return (
-    <td>
+    <>
       {errors.includes(data) ? (
         //we red color any incorrect value and put a question mark where there's no value
         <>
@@ -23,7 +22,7 @@ const PersonDetail = ({ data, errors }) => {
       ) : (
         <span>{data}</span>
       )}
-    </td>
+    </>
   );
 };
 
@@ -33,7 +32,10 @@ const Home = () => {
   const [headers, setHeaders] = useState([]);
   const [totalErrors, setTotalErrors] = useState(0);
   const [searchText, setSearchText] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState({
+    target: null,
+    status: false,
+  });
   const [errorMessage, setErrorMessage] = useState({
     target: null,
     message: null,
@@ -44,6 +46,22 @@ const Home = () => {
       ? person.errors.length > 0
       : person.firstname.toLowerCase().includes(searchText);
   });
+
+  const Cleanup = () => {
+    setFile(null);
+    setTotalErrors(0);
+    setHeaders([]);
+    setPeople([]);
+    setSearchText("");
+    setErrorMessage({
+      target: null,
+      message: null,
+    });
+    setLoading({
+      target: null,
+      status: false,
+    });
+  };
 
   return (
     <div className={styles.content}>
@@ -92,7 +110,7 @@ const Home = () => {
                       <p className={styles.title}>File Name</p>
                       <div className={styles.filename}>
                         <p>{file.name}</p>
-                        <IconButton size="small" onClick={() => setFile(null)}>
+                        <IconButton size="small" onClick={() => Cleanup()}>
                           <Close
                             fontSize="small"
                             style={{ color: "#646c7f" }}
@@ -108,15 +126,25 @@ const Home = () => {
                         <p>{totalErrors} errors found</p>
                         <IconButton
                           size="small"
-                          onClick={() => setSearchText("errors")}
+                          onClick={() =>
+                            setSearchText((prev) =>
+                              prev.match("errors") ? "" : "errors"
+                            )
+                          }
                         >
                           <Error fontSize="small" style={{ color: "red" }} />
                         </IconButton>
                       </div>
                     </div>
-                    <em style={{ color: "#646c7f", fontSize: 14 }}>
-                      Click the error icon to see only details with errors.
-                    </em>
+                    {searchText === "errors" ? (
+                      <em style={{ color: "#646c7f", fontSize: 14 }}>
+                        Click the error icon again to see all people.
+                      </em>
+                    ) : (
+                      <em style={{ color: "#646c7f", fontSize: 14 }}>
+                        Click the error icon to see only people with errors.
+                      </em>
+                    )}
                   </div>
 
                   {/* upload button */}
@@ -160,34 +188,17 @@ const Home = () => {
                         {filteredPeople.map((person, index) => {
                           return (
                             <tr key={index}>
-                              <PersonDetail
-                                data={person.identity}
-                                errors={person.errors}
-                              />
-                              <PersonDetail
-                                data={person.firstname}
-                                errors={person.errors}
-                              />
-                              <PersonDetail
-                                data={person.surname}
-                                errors={person.errors}
-                              />
-                              <PersonDetail
-                                data={person.age}
-                                errors={person.errors}
-                              />
-                              <PersonDetail
-                                data={person.sex}
-                                errors={person.errors}
-                              />
-                              <PersonDetail
-                                data={person.mobile}
-                                errors={person.errors}
-                              />
-                              <PersonDetail
-                                data={person.active}
-                                errors={person.errors}
-                              />
+                              {Object.entries(person).map(([key, value], i) => {
+                                if (key !== "errors")
+                                  return (
+                                    <td key={i}>
+                                      <PersonDetail
+                                        data={value}
+                                        errors={person.errors}
+                                      />
+                                    </td>
+                                  );
+                              })}
 
                               {/* action buttons */}
                               <td>
