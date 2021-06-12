@@ -104,7 +104,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 200px;
+  font-size: 14px;
+  width: 50%;
   height: 40px;
   background-color: #0073cf;
   color: white;
