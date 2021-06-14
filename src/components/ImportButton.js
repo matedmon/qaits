@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useDropzone } from "react-dropzone";
 import styles from "../styles/ImportButton.module.css";
 import { Validate } from "../utils/ValidateData";
+import PersonContext from "../context/PersonContext";
 
 const UploadButton = (props) => {
-  const { setFile, setErrorMessage, setPeople, setHeaders, setTotalErrors } =
-    props;
+  const { setErrorMessage, setHeaders } = props;
+
+  const { setPeople, setExtraInfo } = useContext(PersonContext);
 
   const getFile = (files) => {
     const file = files[0];
@@ -43,7 +45,12 @@ const UploadButton = (props) => {
         };
 
         //set total errors
-        setTotalErrors((prev) => prev + errors.length);
+        setExtraInfo((prev) => {
+          return {
+            ...prev,
+            totalErrors: prev.totalErrors + errors.length,
+          };
+        });
 
         setPeople((oldArray) => [...oldArray, person]);
 
@@ -70,7 +77,13 @@ const UploadButton = (props) => {
 
     reader.readAsText(file);
 
-    setFile(file);
+    //get file
+    setExtraInfo((prev) => {
+      return {
+        ...prev,
+        file,
+      };
+    });
   };
 
   const { getRootProps, getInputProps } = useDropzone({

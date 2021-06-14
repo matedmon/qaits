@@ -1,6 +1,6 @@
 .content {
   position: absolute;
-  height: 100%;
+  height: auto;
   width: 100%;
   background-color: white;
   padding-bottom: 100px;
@@ -17,31 +17,62 @@
 }
 
 .form {
-  margin-top: 40px;
+  margin-top: 50px;
+}
+
+.formDetail {
+  margin: 20px 0;
 }
 
 .form input {
   width: 99%;
   height: 35px;
   margin-top: 8px;
-  margin-bottom: 8px;
   border: 1px solid #ccc;
   outline: none;
 }
 
 .form p {
-  margin: 0;
-  padding: 0;
   font-size: 14px;
 }
 
 .form label {
   font-size: 14px;
+  margin-top: 8px;
+}
+
+.editBtn,
+.saveBtn,
+.errorMessage,
+.successMessage {
+  display: inline;
+  cursor: pointer;
+  /* float: right; */
+  margin: 0;
+}
+
+.editBtn {
+  color: #646c7f;
+}
+
+.errorMessage {
+  color: red;
+}
+
+.successMessage {
+  color: green;
+}
+
+.saveBtn {
+  color: #0073cf;
+}
+
+.editBtn:hover {
+  color: #0073cf;
 }
 
 .dropdownWrapper {
   position: relative;
-  margin-bottom: 12px;
 }
 
 .dropdownItem {
@@ -55,6 +86,10 @@
   justify-content: space-between;
   align-items: center;
   padding: 0 8px;
+}
+
+.dropdownItem p {
+  font-size: 13px;
 }
 
 .dropdownWrapper:hover .dropdown {
@@ -72,6 +107,7 @@
   top: 100%;
   left: 0;
   right: 0;
+  font-size: 14px;
 }
 
 .dropdown .dropdownItem {

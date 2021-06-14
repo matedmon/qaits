@@ -1,10 +1,18 @@
-import React, { useState } from "react";
+import React, { Fragment, useContext, useState } from "react";
 import ImportButton from "../components/ImportButton";
 import styles from "../styles/Home.module.css";
-import { Close, DeleteForever, Edit, Error } from "@material-ui/icons";
+import {
+  Close,
+  DeleteForever,
+  Edit,
+  Error,
+  ArrowBack,
+} from "@material-ui/icons";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import SearchInput from "../components/SearchInput";
 import IconButton from "@material-ui/core/IconButton";
+import { useHistory } from "react-router-dom";
+import PersonContext from "../context/PersonContext";
 
 const PersonDetail = ({ data, errors }) => {
   //identifying errors on the table
@@ -27,10 +35,7 @@ const PersonDetail = ({ data, errors }) => {
 };
 
 const Home = () => {
-  const [file, setFile] = useState(null); //accepted file
-  const [people, setPeople] = useState([]);
   const [headers, setHeaders] = useState([]);
-  const [totalErrors, setTotalErrors] = useState(0);
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState({
     target: null,
@@ -40,6 +45,9 @@ const Home = () => {
     target: null,
     message: null,
   });
+  const routeHistory = useHistory();
+  const { people, setPeople, extraInfo, setExtraInfo } =
+    useContext(PersonContext);
 
   const filteredPeople = people.filter((person) => {
     return searchText === "errors"
@@ -48,10 +56,12 @@ const Home = () => {
   });
 
   const Cleanup = () => {
-    setFile(null);
-    setTotalErrors(0);
     setHeaders([]);
     setPeople([]);
+    setExtraInfo({
+      totalErrors: 0,
+      file: null,
+    });
     setSearchText("");
     setErrorMessage({
       target: null,
@@ -97,7 +107,7 @@ const Home = () => {
 
           {/*================== file information ===================================*/}
           <div className={styles.col2}>
-            {file ? (
+            {people.length > 0 ? (
               <>
                 <p className={styles.subTitle}>
                   Information from the imported File
@@ -109,7 +119,7 @@ const Home = () => {
                     <div className={styles.update}>
                       <p className={styles.title}>File Name</p>
                       <div className={styles.filename}>
-                        <p>{file.name}</p>
+                        <p>{extraInfo.file.name}</p>
                         <IconButton size="small" onClick={() => Cleanup()}>
                           <Close
                             fontSize="small"
@@ -123,22 +133,35 @@ const Home = () => {
                     <div className={styles.update}>
                       <p className={styles.title}>Errors</p>
                       <div className={styles.fileErrors}>
-                        <p>{totalErrors} errors found</p>
-                        <IconButton
-                          size="small"
-                          onClick={() =>
-                            setSearchText((prev) =>
-                              prev.match("errors") ? "" : "errors"
-                            )
-                          }
-                        >
-                          <Error fontSize="small" style={{ color: "red" }} />
-                        </IconButton>
+                        <p>{extraInfo.totalErrors} errors found</p>
+                        {searchText === "errors" ? (
+                          <IconButton
+                            size="small"
+                            onClick={() => setSearchText("")}
+                          >
+                            <ArrowBack
+                              fontSize="small"
+                              style={{ color: "#0073cf" }}
+                            />
+                          </IconButton>
+                        ) : (
+                          <IconButton
+                            size="small"
+                            onClick={() =>
+                              setSearchText((prev) =>
+                                prev.match("errors") ? "" : "errors"
+                              )
+                            }
+                          >
+                            <Error fontSize="small" style={{ color: "red" }} />
+                          </IconButton>
+                        )}{" "}
                       </div>
                     </div>
+
                     {searchText === "errors" ? (
                       <em style={{ color: "#646c7f", fontSize: 14 }}>
-                        Click the error icon again to see all people.
+                        Click the back icon to see all people.
                       </em>
                     ) : (
                       <em style={{ color: "#646c7f", fontSize: 14 }}>
@@ -189,21 +212,34 @@ const Home = () => {
                           return (
                             <tr key={index}>
                               {Object.entries(person).map(([key, value], i) => {
-                                if (key !== "errors")
-                                  return (
-                                    <td key={i}>
-                                      <PersonDetail
-                                        data={value}
-                                        errors={person.errors}
-                                      />
-                                    </td>
-                                  );
+                                if (key === "errors")
+                                  return <Fragment key={i}></Fragment>;
+                                return (
+                                  <td key={i}>
+                                    <PersonDetail
+                                      data={value}
+                                      errors={person.errors}
+                                    />
+                                  </td>
+                                );
                               })}
 
                               {/* action buttons */}
                               <td>
                                 <div className={styles.actionBtns}>
-                                  <p className={styles.editBtn}>Edit</p>
+                                  <p
+                                    className={styles.editBtn}
+                                    onClick={() =>
+                                      routeHistory.push({
+                                        pathname: "/editperson",
+                                        state: {
+                                          index,
+                                        },
+                                      })
+                                    }
+                                  >
+                                    Edit
+                                  </p>
                                   <p className={styles.deleteBtn}>Delete</p>
                                 </div>
                               </td>
@@ -219,12 +255,10 @@ const Home = () => {
               // import button component
               <div className={styles.btnContainer}>
                 <ImportButton
-                  setFile={setFile}
                   setErrorMessage={setErrorMessage}
                   setPeople={setPeople}
                   setHeaders={setHeaders}
                   setLoading={setLoading}
-                  setTotalErrors={setTotalErrors}
                 />
                 {errorMessage.target === "file" ? (
                   <p style={{ color: "red", textAlign: "center" }}>
