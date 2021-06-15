@@ -4,33 +4,31 @@ export const Validate = (key, value, errors) => {
   if (key === "identity" || key === "age") {
     const validateValue = /\d+/;
     //check if the value doesnt  contain only digits
-    if (!validateValue.test(value)) errors.push(value);
+    if (!validateValue.test(value)) errors.push({ key, value });
   }
 
   if (key === "firstname" || key === "surname") {
     if (value === "" || value === null || value === undefined)
-      errors.push(value);
+      errors.push({ key, value });
   }
 
   if (key === "sex") {
     const validateValue = /M|F/;
     //check if the value doesnt  contain only 'M' or 'F'
-    if (!validateValue.test(value)) errors.push(value);
+    if (!validateValue.test(value)) errors.push({ key, value });
   }
 
   if (key === "mobile") {
     const validateValue = /\d{10}/;
     //check if the value doesnt  contain only 'M' or 'F'
-    if (!validateValue.test(value)) errors.push(value);
+    if (!validateValue.test(value)) errors.push({ key, value });
   }
 
   if (key === "active") {
     const validateValue = /TRUE|FALSE/;
     //check if the value doesnt  contain only 'TRUE' or 'FALSE'
-    if (!validateValue.test(value)) errors.push(value);
+    if (!validateValue.test(value)) errors.push({ key, value });
   }
-
-  return errors;
 };
 
 const validateID = (key, value, people, setError) => {
@@ -54,6 +52,36 @@ const validateID = (key, value, people, setError) => {
     return true;
   }
 
+  if (value < 0) {
+    setError({
+      target: key,
+      message: `${key} should be greater than 0!`,
+    });
+    return true;
+  }
+
+  return false;
+};
+
+const validateAge = (key, value, setError) => {
+  //check if the value doesn't  contain only digits
+  const validateValue = /\d+/;
+  if (!validateValue.test(value)) {
+    setError({
+      target: key,
+      message: `${key} should be a number!`,
+    });
+    return true;
+  }
+
+  if (value <= 0 || value > 300) {
+    setError({
+      target: key,
+      message: `${key} should be greater than 0 and less than 300!`,
+    });
+    return true;
+  }
+
   return false;
 };
 
@@ -71,7 +99,7 @@ const validateName = (key, value, setError) => {
   if (value.length > 30 || value.length < 2) {
     setError({
       target: key,
-      message: `${key} should be at least 2 and less than 30 characters long!`,
+      message: `${key} should be at least 2 and less than 31 characters long!`,
     });
     return true;
   }
@@ -104,6 +132,15 @@ const validateMobile = (key, value, setError) => {
     return true;
   }
 
+  //mobile number should start with 0;
+  if (value.charAt(0) !== "0") {
+    setError({
+      target: key,
+      message: `${key} number should start with '0'!`,
+    });
+    return true;
+  }
+
   return false;
 };
 
@@ -123,14 +160,16 @@ const validateActive = (key, value, setError) => {
 
 //will be used for validating user input values
 export const ErrorFound = (key, value, people, setError) => {
-  if (key === "identity") return validateID(key, value, people, setError);
+  if (key === "Identity") return validateID(key, value, people, setError);
 
-  if (key === "firstname" || key === "surname")
+  if (key === "Firstname" || key === "Surname")
     return validateName(key, value, setError);
 
-  if (key === "sex") return validateSex(key, value, setError);
+  if (key === "Sex") return validateSex(key, value, setError);
 
-  if (key === "mobile") return validateMobile(key, value, setError);
+  if (key === "Mobile") return validateMobile(key, value, setError);
 
-  if (key === "active") return validateActive(key, value, setError);
+  if (key === "Active") return validateActive(key, value, setError);
+
+  if (key === "Age") return validateAge(key, value, setError);
 };

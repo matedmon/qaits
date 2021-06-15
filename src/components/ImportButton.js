@@ -5,7 +5,7 @@ import { Validate } from "../utils/ValidateData";
 import PersonContext from "../context/PersonContext";
 
 const UploadButton = (props) => {
-  const { setErrorMessage, setHeaders } = props;
+  const { setError, setLoading } = props;
 
   const { setPeople, setExtraInfo } = useContext(PersonContext);
 
@@ -13,11 +13,22 @@ const UploadButton = (props) => {
     const file = files[0];
     let reader = new FileReader();
 
+    reader.onloadstart = (e) => {
+      //show circularprogress bar
+      setLoading("file");
+    };
+
     //============ read data from the file ==============
     reader.onload = (e) => {
       const allLines = e.target.result.split(/\r\n|\n/); //all lines from the file
       const firstLine = allLines[0].split(/,/);
-      setHeaders(firstLine);
+
+      setExtraInfo((prev) => {
+        return {
+          ...prev,
+          headers: firstLine,
+        };
+      });
 
       for (let a = 1; a < allLines.length - 1; a++) {
         const line = allLines[a].split(/,/);
@@ -72,7 +83,12 @@ const UploadButton = (props) => {
     // reader.onprogress = (e) => {};
 
     reader.onerror = (e) => {
-      setErrorMessage({ target: "file", message: e.target.error.message });
+      setError({ target: "file", message: e.target.error.message });
+    };
+
+    reader.onloadend = (e) => {
+      //stop showing progressbar
+      setLoading(null);
     };
 
     reader.readAsText(file);
@@ -91,7 +107,7 @@ const UploadButton = (props) => {
     maxFiles: 1,
     onDropAccepted: getFile,
     onDropRejected: (errors) =>
-      setErrorMessage({ target: "file", message: errors[0].errors[0].message }),
+      setError({ target: "file", message: errors[0].errors[0].message }),
   });
 
   return (

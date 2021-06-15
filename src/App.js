@@ -8,6 +8,7 @@ function App() {
   const [extraInfo, setExtraInfo] = useState({
     totalErrors: 0,
     file: null,
+    headers: [],
   });
 
   return (

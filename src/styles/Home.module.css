@@ -1,57 +1,27 @@
+.content {
+  position: relative;
+}
+
 .container {
   width: 95%;
   margin: auto;
 }
 
-.row {
-  display: grid;
-  grid-template-columns: 20% 80%;
+.peopleInfo {
   background-color: white;
   box-shadow: rgba(59, 59, 128, 0.2) 0px 7px 29px 0px;
   border-radius: 8px;
-  width: 100%;
   min-height: 80vh;
   margin: 30px 0;
-  padding: 30px 0;
+  padding: 30px;
 }
 
-.col {
-  border-right: solid 1px #ddd;
-  padding: 0 20px 0 30px;
-}
+/* ********************** info from the file ************************** */
 
-.col p {
-  margin: 0;
-}
-
-.fileList {
-  color: #646c7f;
-  margin-top: 16px;
-}
-
-.file {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #ccc;
-  padding: 8px 0;
-  margin-right: 10px;
-  font-size: 14px;
-}
-
-.icons {
-  display: flex;
-  align-items: center;
-}
-
-.col2 {
-  position: relative;
-  padding: 0 30px;
-}
-
+/* ======== import button container ========== */
 .btnContainer {
   width: 90%;
-  align-self: center;
+  /* align-self: center; */
   margin: 0;
   position: absolute;
   top: 50%;
@@ -59,12 +29,11 @@
   transform: translate(-50%, -50%);
 }
 
-/* ================== file info =================== */
-
-.col2 .subTitle {
+.peopleInfo .subTitle {
   margin: 0 0 40px 0;
 }
 
+/* ======== file name and error updates ========== */
 .fileGrid {
   display: grid;
   grid-template-columns: 40% 60%;
@@ -99,14 +68,13 @@
   color: red;
   margin: 0 12px 0 0;
 }
-
+/* ======== upload button ========== */
 .uploadBtn {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   font-size: 14px;
   width: 50%;
-  height: 40px;
   background-color: #0073cf;
   color: white;
   float: right;
@@ -114,10 +82,15 @@
   cursor: pointer;
 }
 
+.uploadBtn p {
+  text-align: center;
+}
+
 .uploadBtn:hover {
   box-shadow: rgba(59, 59, 128, 0.2) 0px 7px 29px 0px;
 }
 
+/* ======== table container ========== */
 .fileInfo {
   /* border-radius: 8px; */
   box-shadow: rgba(59, 59, 128, 0.2) 0px 7px 29px 0px;
@@ -150,6 +123,7 @@ td {
   padding: 12px;
 }
 
+/* ======== edit and delete button ========== */
 .actionBtns {
   display: flex;
   float: right;
@@ -171,4 +145,68 @@ p.editBtn {
   color: red;
   font-size: small;
   cursor: pointer;
+}
+
+/* ******************************* mobile ************************************* */
+.mobile {
+  padding: 20px;
+  margin-top: 8px;
+  display: none;
+}
+
+.dropdown {
+  position: relative;
+  font-size: 14px;
+}
+
+.dropdownTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: solid 1px #ccc;
+}
+
+.dropdownMenu {
+  background-color: whitesmoke;
+  padding: 8px 12px;
+  /* color: #646c7f; */
+}
+
+.dropdown .btns {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 8px;
+}
+
+.dropdownItem {
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px;
+}
+
+.dropdownItem:hover {
+  background-color: #f2f2f2;
+}
+
+@media only screen and (max-width: 800px) {
+  .fileGrid {
+    display: block;
+    margin: 8px 0;
+  }
+
+  .uploadBtn {
+    width: 100%;
+    float: none;
+    margin: 20px 0;
+  }
+
+  .fileInfo {
+    display: none;
+  }
+
+  .mobile {
+    display: block;
+  }
 }

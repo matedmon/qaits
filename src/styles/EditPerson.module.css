@@ -16,6 +16,8 @@
   text-align: center;
 }
 
+/* ======================== form inputs and labels ============================= */
+
 .form {
   margin-top: 50px;
 }
@@ -41,13 +43,14 @@
   margin-top: 8px;
 }
 
+/* ======================== form buttons and messages ============================= */
+
 .editBtn,
 .saveBtn,
 .errorMessage,
 .successMessage {
   display: inline;
   cursor: pointer;
-  /* float: right; */
   margin: 0;
 }
 
@@ -70,6 +73,8 @@
 .editBtn:hover {
   color: #0073cf;
 }
+
+/* ======================== dropdown ============================= */
 
 .dropdownWrapper {
   position: relative;
@@ -129,9 +134,9 @@
   color: white;
 }
 
+/* ======================== submit button ============================= */
+
 .submitBtn {
-  background-color: #0073cf;
-  color: white;
   height: 40px;
   width: 40%;
   float: right;

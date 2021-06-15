@@ -5,25 +5,71 @@ import PersonContext from "../context/PersonContext";
 import styles from "../styles/EditPerson.module.css";
 import { ErrorFound } from "../utils/ValidateData";
 
+const Messages = ({ error, success, keyValue }) => {
+  return (
+    <>
+      {error.target === keyValue ? (
+        <p className={styles.errorMessage}>{error.message}</p>
+      ) : null}
+
+      {success.target === keyValue ? (
+        <p className={styles.successMessage}>{success.message}</p>
+      ) : null}
+    </>
+  );
+};
+
+const ActionButtons = (props) => {
+  const { edit, error, success, keyValue, saveData, enableEdit } = props;
+
+  return (
+    <>
+      {edit === keyValue ? (
+        <>
+          {error.target === edit || success.target === edit ? (
+            <Messages error={error} success={success} keyValue={edit} />
+          ) : (
+            <p className={styles.saveBtn} onClick={() => saveData(edit)}>
+              Save
+            </p>
+          )}
+        </>
+      ) : (
+        <p className={styles.editBtn} onClick={() => enableEdit(keyValue)}>
+          Edit
+        </p>
+      )}
+    </>
+  );
+};
+
 const EditPerson = () => {
-  const { people, setPeople } = useContext(PersonContext);
+  const { people, setPeople, setExtraInfo } = useContext(PersonContext);
   const location = useLocation();
-  const [person, setPerson] = useState(people[location.state.index]);
+  const [person, setPerson] = useState(location.state.person);
   const [edit, setEdit] = useState(null);
   const [textInput, setTextInput] = useState(null);
   const [select, setSelect] = useState(null); //will be used to select active and sex values
+
+  const [numErrors, setNumErrors] = useState(
+    location.state.person.errors.length
+  );
   const [error, setError] = useState({
     target: null,
     message: null,
   });
+
   const [success, setSuccess] = useState({
     target: null,
     message: null,
   });
+
   const routeHistory = useHistory();
+  const activeRef = useRef();
+  const sexRef = useRef();
 
   //================== handle actions ================================
-  const EnableEdit = (key) => {
+  const enableEdit = (key) => {
     //enable input
     setEdit(key);
 
@@ -32,6 +78,7 @@ const EditPerson = () => {
       target: null,
       message: null,
     });
+
     setSuccess({
       target: null,
       message: null,
@@ -39,49 +86,102 @@ const EditPerson = () => {
     setSelect(null);
   };
 
-  const SaveData = (key) => {
-    //save the updated value
+  const saveData = (key) => {
+    //=================== error handling =========================
+    //we don't update the person if the input is empty
+    const isEmpty = /\s+/;
+    if (isEmpty.test(textInput) || textInput === null) {
+      //remove the inputted value
+      setTextInput(null);
+      return;
+    }
+
+    //making sure the value that already exist doesn't get updated
+    if (person[key.toLowerCase()] === textInput) {
+      //remove the inputted value
+      setTextInput(null);
+      return;
+    }
+
+    //if there's an error, do not update the person's details
     const found = ErrorFound(key, textInput, people, setError);
     if (found) {
-      //if there's an error, do not update the person's details
+      //remove the inputted value
+      setTextInput(null);
       return;
-    } else {
-      setPerson((prev) => {
-        return {
-          ...prev,
-          [key.toLowerCase()]: textInput,
-        };
-      });
+    }
 
-      //display not the edit button and the error message
-      setEdit(null);
-      setError({
+    //================= update person's details ===================
+    setPerson((prev) => {
+      return {
+        ...prev,
+        [key.toLowerCase()]: textInput,
+      };
+    });
+
+    //display not the edit button and the error message
+    setError({
+      target: null,
+      message: null,
+    });
+
+    //show success message
+    setSuccess({
+      target: key,
+      message: `${key} updated successfully!`,
+    });
+
+    //hide the success message after 1.5 sec
+    setTimeout(() => {
+      setSuccess({
         target: null,
         message: null,
       });
 
-      //show success message
-      setSuccess({
-        target: key,
-        message: `${key} updated successfully!`,
-      });
+      //show edit button
+      setEdit(null);
+    }, 1500);
 
-      //hide the success message after 3 seconds
-      setTimeout(() => {
-        setSuccess({
-          target: null,
-          message: null,
-        });
-      }, 3000);
+    //remove the inputted value
+    setTextInput(null);
+
+    //updating error array of the current person
+    const index = person.errors.findIndex((p) => p.key === key.toLowerCase());
+    if (index !== -1) {
+      //if the error key is available, remove it from the error array
+      //NB: person.errors() contains all the errors found on this person's details
+      //so now that the error is resolved, there's no need to mark this value as error.
+
+      setPerson((prev) => {
+        return {
+          ...prev,
+          errors: prev.errors.splice(index, 1),
+        };
+      });
+      console.log(person.error);
     }
   };
 
-  const UpdatePeople = () => {
-    //update the people array
-    setPeople((prev) => {
-      prev[location.state.index] = person;
-      return prev;
+  const updatePeople = () => {
+    //update total errors
+    setExtraInfo((prev) => {
+      return {
+        ...prev,
+        totalErrors: prev.totalErrors - numErrors,
+      };
     });
+
+    //update the people array
+    const index = people.findIndex((p) => p.identity === person.identity);
+
+    if (index > -1) {
+      setPeople((prev) => {
+        prev[index] = person;
+        return prev;
+      });
+    }
+
+    setNumErrors(0);
 
     //go back to homepage
     routeHistory.goBack();
@@ -99,19 +199,13 @@ const EditPerson = () => {
     setTextInput(e.target.value);
   };
 
-  //================== component ======================================
-  const Messages = ({ key }) => {
-    return (
-      <>
-        {error.target === key ? (
-          <p className={styles.errorMessage}>{error.message}</p>
-        ) : null}
+  const handleSelect = (value) => {
+    setTextInput(value);
+    setSelect(value);
 
-        {success.target === key ? (
-          <p className={styles.successMessage}>{success.message}</p>
-        ) : null}
-      </>
-    );
+    //hide dropdown after selection
+    activeRef.current.style.pointerEvents = "none";
+    sexRef.current.style.pointerEvents = "none";
   };
 
   return (
@@ -136,29 +230,14 @@ const EditPerson = () => {
               disabled={edit === "Identity" ? false : true}
               onChange={handleInput}
             />
-            <>
-              {edit === "Identity" ? (
-                <>
-                  {error.target === edit || success.target === edit ? (
-                    <Messages key={edit} />
-                  ) : (
-                    <p
-                      className={styles.saveBtn}
-                      onClick={() => SaveData(edit)}
-                    >
-                      Save
-                    </p>
-                  )}
-                </>
-              ) : (
-                <p
-                  className={styles.editBtn}
-                  onClick={() => EnableEdit("Identity")}
-                >
-                  Edit
-                </p>
-              )}
-            </>
+            <ActionButtons
+              success={success}
+              error={error}
+              enableEdit={enableEdit}
+              edit={edit}
+              saveData={saveData}
+              keyValue="Identity"
+            />
             <br />
           </div>
 
@@ -175,29 +254,14 @@ const EditPerson = () => {
               disabled={edit === "Firstname" ? false : true}
               onChange={handleInput}
             />
-            <>
-              {edit === "Firstname" ? (
-                <>
-                  {error.target === edit || success.target === edit ? (
-                    <Messages key={edit} />
-                  ) : (
-                    <p
-                      className={styles.saveBtn}
-                      onClick={() => SaveData(edit)}
-                    >
-                      Save
-                    </p>
-                  )}
-                </>
-              ) : (
-                <p
-                  className={styles.editBtn}
-                  onClick={() => EnableEdit("Firstname")}
-                >
-                  Edit
-                </p>
-              )}
-            </>
+            <ActionButtons
+              success={success}
+              error={error}
+              enableEdit={enableEdit}
+              edit={edit}
+              saveData={saveData}
+              keyValue="Firstname"
+            />
             <br />
           </div>
 
@@ -214,30 +278,14 @@ const EditPerson = () => {
               disabled={edit === "Surname" ? false : true}
               onChange={handleInput}
             />
-            <>
-              {edit === "Surname" ? (
-                <>
-                  {error.target === edit || success.target === edit ? (
-                    <Messages key={edit} />
-                  ) : (
-                    <p
-                      className={styles.saveBtn}
-                      onClick={() => SaveData(edit)}
-                    >
-                      Save
-                    </p>
-                  )}
-                </>
-              ) : (
-                <p
-                  className={styles.editBtn}
-                  onClick={() => EnableEdit("Surname")}
-                >
-                  Edit
-                </p>
-              )}
-            </>
-
+            <ActionButtons
+              success={success}
+              error={error}
+              enableEdit={enableEdit}
+              edit={edit}
+              saveData={saveData}
+              keyValue="Surname"
+            />
             <br />
           </div>
 
@@ -249,32 +297,22 @@ const EditPerson = () => {
               type="number"
               id="age"
               minLength={1}
+              maxLength={3}
+              size={3}
               max={300}
+              min={1}
               defaultValue={person.age}
               disabled={edit === "Age" ? false : true}
               onChange={handleInput}
             />
-            <>
-              {edit === "Age" ? (
-                <>
-                  {error.target === edit || success.target === edit ? (
-                    <Messages key={edit} />
-                  ) : (
-                    <p
-                      className={styles.saveBtn}
-                      onClick={() => SaveData(edit)}
-                    >
-                      Save
-                    </p>
-                  )}
-                </>
-              ) : (
-                <p className={styles.editBtn} onClick={() => EnableEdit("Age")}>
-                  Edit
-                </p>
-              )}
-            </>
-
+            <ActionButtons
+              success={success}
+              error={error}
+              enableEdit={enableEdit}
+              edit={edit}
+              saveData={saveData}
+              keyValue="Age"
+            />
             <br />
           </div>
 
@@ -292,30 +330,14 @@ const EditPerson = () => {
               disabled={edit === "Mobile" ? false : true}
               onChange={handleInput}
             />
-            <>
-              {edit === "Mobile" ? (
-                <>
-                  {error.target === edit || success.target === edit ? (
-                    <Messages key={edit} />
-                  ) : (
-                    <p
-                      className={styles.saveBtn}
-                      onClick={() => SaveData(edit)}
-                    >
-                      Save
-                    </p>
-                  )}
-                </>
-              ) : (
-                <p
-                  className={styles.editBtn}
-                  onClick={() => EnableEdit("Mobile")}
-                >
-                  Edit
-                </p>
-              )}
-            </>
-
+            <ActionButtons
+              success={success}
+              error={error}
+              enableEdit={enableEdit}
+              edit={edit}
+              saveData={saveData}
+              keyValue="Mobile"
+            />
             <br />
           </div>
 
@@ -330,6 +352,7 @@ const EditPerson = () => {
                 pointerEvents: edit === "Sex" ? "visible" : "none",
               }}
               className={styles.dropdownWrapper}
+              ref={sexRef}
             >
               <div className={styles.dropdownItem}>
                 <p>{select && edit === "Sex" ? select : person.sex}</p>
@@ -338,44 +361,26 @@ const EditPerson = () => {
               <div className={styles.dropdown}>
                 <div
                   className={styles.dropdownItem}
-                  onClick={() => {
-                    setTextInput("M");
-                    setSelect("M");
-                  }}
+                  onClick={() => handleSelect("M")}
                 >
                   <p>M</p>
                 </div>
                 <div
                   className={styles.dropdownItem}
-                  onClick={() => {
-                    setTextInput("F");
-                    setSelect("F");
-                  }}
+                  onClick={() => handleSelect("F")}
                 >
                   <p>F</p>
                 </div>
               </div>
             </div>
-            <>
-              {edit === "Sex" ? (
-                <>
-                  {error.target === edit || success.target === edit ? (
-                    <Messages key={edit} />
-                  ) : (
-                    <p
-                      className={styles.saveBtn}
-                      onClick={() => SaveData(edit)}
-                    >
-                      Save
-                    </p>
-                  )}
-                </>
-              ) : (
-                <p className={styles.editBtn} onClick={() => EnableEdit("Sex")}>
-                  Edit
-                </p>
-              )}
-            </>
+            <ActionButtons
+              success={success}
+              error={error}
+              enableEdit={enableEdit}
+              edit={edit}
+              saveData={saveData}
+              keyValue="Sex"
+            />
           </div>
 
           {/* ============ active ===================== */}
@@ -389,6 +394,7 @@ const EditPerson = () => {
                 pointerEvents: edit === "Active" ? "visible" : "none",
               }}
               className={styles.dropdownWrapper}
+              ref={activeRef}
             >
               <div className={styles.dropdownItem}>
                 <p>{select && edit === "Active" ? select : person.active}</p>
@@ -397,52 +403,41 @@ const EditPerson = () => {
               <div className={styles.dropdown}>
                 <div
                   className={styles.dropdownItem}
-                  onClick={() => {
-                    setTextInput("TRUE");
-                    setSelect("TRUE");
-                  }}
+                  onClick={() => handleSelect("TRUE")}
                 >
                   <p>TRUE</p>
                 </div>
                 <div
                   className={styles.dropdownItem}
-                  onClick={() => {
-                    setTextInput("FALSE");
-                    setSelect("FALSE");
-                  }}
+                  onClick={() => handleSelect("FALSE")}
                 >
                   <p>FALSE</p>
                 </div>
               </div>
             </div>
-            <>
-              {edit === "Active" ? (
-                <>
-                  {error.target === edit || success.target === edit ? (
-                    <Messages key={edit} />
-                  ) : (
-                    <p
-                      className={styles.saveBtn}
-                      onClick={() => SaveData(edit)}
-                    >
-                      Save
-                    </p>
-                  )}
-                </>
-              ) : (
-                <p
-                  className={styles.editBtn}
-                  onClick={() => EnableEdit("Active")}
-                >
-                  Edit
-                </p>
-              )}
-            </>
+            <ActionButtons
+              success={success}
+              error={error}
+              enableEdit={enableEdit}
+              edit={edit}
+              saveData={saveData}
+              keyValue="Active"
+            />
           </div>
 
           {/* ============ button ====================== */}
           <div>
-            <div className={styles.submitBtn} onClick={() => UpdatePeople()}>
+            <div
+              style={{
+                backgroundColor:
+                  person.errors.length === 0 ? "#0073cf" : "white",
+                color: person.errors.length === 0 ? "white" : "#646c7f",
+                pointerEvents: person.errors.length === 0 ? "visible" : "none",
+                border: person.errors.length === 0 ? "none" : "solid 1px #ccc",
+              }}
+              className={styles.submitBtn}
+              onClick={() => updatePeople()}
+            >
               <p>DONE</p>
             </div>
           </div>
