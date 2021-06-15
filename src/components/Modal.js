@@ -1,26 +1,28 @@
 import React from "react";
+import styles from "../styles/Modal.module.css";
 
-const Modal = ({ showModal, message, action }) => {
+const Modal = ({ setShowModal, message, action, showModal }) => {
   return (
-    <div
-      style={{
-        position: "absolute",
-        width: "100%",
-        height: "auto",
-        backgroundColor: "rgba(0,0,0,0.4)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: "white",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      ></div>
+    <div className={styles.background}>
+      <div className={styles.container}>
+        <div>
+          <p className={styles.msg}>{message}</p>
+          <div className={styles.btns}>
+            <div
+              className={styles.cancelBtn}
+              onClick={() => setShowModal(null)}
+            >
+              <p className={styles.cancelText}>CANCEL</p>
+            </div>
+            <div
+              className={styles.confirmBtn}
+              onClick={() => action(showModal)}
+            >
+              <p className={styles.confirmText}>CONFIRM</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

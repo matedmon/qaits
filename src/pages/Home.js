@@ -7,6 +7,7 @@ import SearchInput from "../components/SearchInput";
 import IconButton from "@material-ui/core/IconButton";
 import { useHistory } from "react-router-dom";
 import PersonContext from "../context/PersonContext";
+import Modal from "../components/Modal";
 import { CircularProgress } from "@material-ui/core";
 
 const PersonDetail = ({ data, errors }) => {
@@ -74,7 +75,7 @@ const Headers = ({ extraInfo }) => {
 
 //============== table rows ==================
 const PeopleDetails = (props) => {
-  const { filteredPeople, routeHistory } = props;
+  const { filteredPeople, routeHistory, setShowModal } = props;
   return (
     <>
       {filteredPeople.map((person, index) => {
@@ -106,7 +107,12 @@ const PeopleDetails = (props) => {
                 >
                   Edit
                 </p>
-                <p className={styles.deleteBtn}>Delete</p>
+                <p
+                  className={styles.deleteBtn}
+                  onClick={() => setShowModal(person.identity)}
+                >
+                  Delete
+                </p>
               </div>
             </td>
           </tr>
@@ -117,7 +123,13 @@ const PeopleDetails = (props) => {
 };
 
 const TableInfo = (props) => {
-  const { setSearchText, extraInfo, filteredPeople, routeHistory } = props;
+  const {
+    setSearchText,
+    extraInfo,
+    filteredPeople,
+    routeHistory,
+    setShowModal,
+  } = props;
   return (
     <>
       <SearchInput setSearchText={setSearchText} />
@@ -130,6 +142,7 @@ const TableInfo = (props) => {
             <PeopleDetails
               filteredPeople={filteredPeople}
               routeHistory={routeHistory}
+              setShowModal={setShowModal}
             />
           </tbody>
         </table>
@@ -145,6 +158,7 @@ const MobileLayout = (props) => {
     setSearchText,
     viewDetails,
     setViewDetails,
+    setShowModal,
   } = props;
 
   const openMenu = (id) => {
@@ -181,8 +195,25 @@ const MobileLayout = (props) => {
                 >
                   <div>
                     <div className={styles.btns}>
-                      <p className={styles.editBtn}>Edit</p>
-                      <p className={styles.deleteBtn}>Delete</p>
+                      <p
+                        className={styles.editBtn}
+                        onClick={() =>
+                          routeHistory.push({
+                            pathname: "/editperson",
+                            state: {
+                              person,
+                            },
+                          })
+                        }
+                      >
+                        Edit
+                      </p>
+                      <p
+                        className={styles.deleteBtn}
+                        onClick={() => setShowModal(person.identity)}
+                      >
+                        Delete
+                      </p>
                     </div>
                   </div>
                   {Object.entries(person).map(([key, value], i) => {
@@ -209,7 +240,7 @@ const Home = () => {
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(null);
   const [viewDetails, setViewDetails] = useState(null);
-  const [uploadedPeople, setUploadedPeople] = useState([]);
+  const [showModal, setShowModal] = useState(null);
 
   const [error, setError] = useState({
     target: null,
@@ -246,102 +277,137 @@ const Home = () => {
     });
   };
 
-  return (
-    <div className={styles.content}>
-      <div className={styles.container}>
-        <section className={styles.peopleInfo}>
-          {/*================== file information ===================================*/}
-          <p className={styles.subTitle}>Information from the .csv File</p>
+  const removePerson = (id) => {
+    const index = people.findIndex((p) => p.identity === id);
 
-          {/* show only the upload button if there is no imported file */}
-          {people.length > 0 ? (
-            <>
-              <div className={styles.fileGrid}>
-                {/* file name and error updates */}
-                <div className={styles.fileUpdate}>
-                  {/* file name */}
-                  <div className={styles.update}>
-                    <p className={styles.title}>File Name</p>
-                    <div className={styles.filename}>
-                      <p>{extraInfo.file.name}</p>
-                      <IconButton size="small" onClick={() => Cleanup()}>
-                        <Close fontSize="small" style={{ color: "#646c7f" }} />
-                      </IconButton>
+    if (extraInfo.file && index > -1) {
+      const errors = people[index].errors.length;
+      setPeople((prev) => {
+        prev.splice(index, 1);
+        return prev;
+      });
+      setExtraInfo((prev) => {
+        return {
+          ...prev,
+          totalErrors: prev.totalErrors - errors,
+        };
+      });
+    }
+
+    setShowModal(null);
+  };
+
+  return (
+    <>
+      {showModal ? (
+        <Modal
+          setShowModal={setShowModal}
+          message="Are you sure you want to delete this person?"
+          action={removePerson}
+          showModal={showModal}
+        />
+      ) : null}
+      <div className={styles.content}>
+        <div className={styles.container}>
+          <section className={styles.peopleInfo}>
+            {/*================== file information ===================================*/}
+            <p className={styles.subTitle}>Information from the .csv File</p>
+
+            {/* show only the upload button if there is no imported file */}
+            {people.length > 0 ? (
+              <>
+                <div className={styles.fileGrid}>
+                  {/* file name and error updates */}
+                  <div className={styles.fileUpdate}>
+                    {/* file name */}
+                    <div className={styles.update}>
+                      <p className={styles.title}>File Name</p>
+                      <div className={styles.filename}>
+                        <p>{extraInfo.file.name}</p>
+                        <IconButton size="small" onClick={() => Cleanup()}>
+                          <Close
+                            fontSize="small"
+                            style={{ color: "#646c7f" }}
+                          />
+                        </IconButton>
+                      </div>
+                    </div>
+
+                    {/*  file errors */}
+                    <div className={styles.update}>
+                      <ErrorUpdate
+                        setSearchText={setSearchText}
+                        searchText={searchText}
+                        extraInfo={extraInfo}
+                      />
+                    </div>
+
+                    {/* how to show people with errors messages */}
+                    {searchText === "errors" ? (
+                      <em style={{ color: "#646c7f", fontSize: 14 }}>
+                        Click the back icon to see all people.
+                      </em>
+                    ) : (
+                      <em style={{ color: "#646c7f", fontSize: 14 }}>
+                        Click the error icon to see only people with errors.
+                      </em>
+                    )}
+                  </div>
+
+                  {/* upload button */}
+                  <div>
+                    <div className={styles.uploadBtn}>
+                      <p>STORE DATA WITHOUT ERRORS</p>
                     </div>
                   </div>
-
-                  {/*  file errors */}
-                  <div className={styles.update}>
-                    <ErrorUpdate
-                      setSearchText={setSearchText}
-                      searchText={searchText}
-                      extraInfo={extraInfo}
-                    />
-                  </div>
-
-                  {/* how to show people with errors messages */}
-                  {searchText === "errors" ? (
-                    <em style={{ color: "#646c7f", fontSize: 14 }}>
-                      Click the back icon to see all people.
-                    </em>
-                  ) : (
-                    <em style={{ color: "#646c7f", fontSize: 14 }}>
-                      Click the error icon to see only people with errors.
-                    </em>
-                  )}
                 </div>
 
-                {/* upload button */}
-                <div>
-                  <div className={styles.uploadBtn}>
-                    <p>STORE DATA WITHOUT ERRORS</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* information from the imported file */}
-              <div className={styles.fileInfo}>
-                <TableInfo
-                  extraInfo={extraInfo}
-                  filteredPeople={filteredPeople}
-                  setSearchText={setSearchText}
-                  routeHistory={routeHistory}
-                />
-              </div>
-              {/* display this layout on mobile */}
-              <MobileLayout
-                filteredPeople={filteredPeople}
-                routeHistory={routeHistory}
-                setSearchText={setSearchText}
-                viewDetails={viewDetails}
-                setViewDetails={setViewDetails}
-              />
-            </>
-          ) : (
-            // import button component
-            <div className={styles.btnContainer}>
-              {loading === "file" ? (
-                <p style={{ textAlign: "center" }}>Please wait...</p>
-              ) : (
-                <>
-                  <ImportButton
-                    setError={setError}
-                    setPeople={setPeople}
-                    setLoading={setLoading}
+                {/* information from the imported file */}
+                <div className={styles.fileInfo}>
+                  <TableInfo
+                    extraInfo={extraInfo}
+                    filteredPeople={filteredPeople}
+                    setSearchText={setSearchText}
+                    routeHistory={routeHistory}
+                    setShowModal={setShowModal}
                   />
-                  {/* display file error message here */}
-                  {error.target === "file" ? (
-                    <p style={{ color: "red", textAlign: "center" }}>
-                      {error.message}
-                    </p>
-                  ) : null}
-                </>
-              )}
-            </div>
-          )}
-        </section>
+                </div>
+                {/* display this layout on mobile */}
+                <MobileLayout
+                  filteredPeople={filteredPeople}
+                  routeHistory={routeHistory}
+                  setSearchText={setSearchText}
+                  viewDetails={viewDetails}
+                  setViewDetails={setViewDetails}
+                  setShowModal={setShowModal}
+                />
+              </>
+            ) : (
+              // import button component
+              <div className={styles.btnContainer}>
+                {loading === "file" ? (
+                  <p style={{ textAlign: "center" }}>Please wait...</p>
+                ) : (
+                  <>
+                    <ImportButton
+                      setError={setError}
+                      setPeople={setPeople}
+                      setLoading={setLoading}
+                    />
+                    {/* display file error message here */}
+                    {error.target === "file" ? (
+                      <p style={{ color: "red", textAlign: "center" }}>
+                        {error.message}
+                      </p>
+                    ) : null}
+                  </>
+                )}
+              </div>
+            )}
+          </section>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
