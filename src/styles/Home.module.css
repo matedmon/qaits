@@ -41,7 +41,7 @@
 /* ======== file name and error updates ========== */
 .fileGrid {
   display: grid;
-  grid-template-columns: 40% 60%;
+  grid-template-columns: 40% 20% 40%;
   margin-bottom: 40px;
 }
 
@@ -80,18 +80,18 @@
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  width: 50%;
   background-color: #0073cf;
   color: white;
   border-radius: 2px;
   cursor: pointer;
-  float: right;
 }
 
 .fileGrid .errorMsg {
   color: red;
   display: block;
-  width: 50%;
+}
+
+.uploadContainer {
   float: right;
 }
 

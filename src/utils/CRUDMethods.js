@@ -114,3 +114,25 @@ export const addPeople = (key, people, setLoading, setError) => {
       handleError(key, error, setError);
     });
 };
+
+export const getPeople = (key, setPeople, setLoading, setError) => {
+  setLoading(key); //show progressbar
+
+  setError({
+    message: null,
+    target: null,
+  });
+
+  axios
+    .get(`http://localhost:5000/person/getAll`)
+    .then(function (response) {
+      setLoading(null);
+
+      //update people array
+      setPeople(response.data);
+    })
+    .catch(function (error) {
+      setLoading(null);
+      handleError(key, error, setError);
+    });
+};
