@@ -173,7 +173,6 @@ const EditPerson = () => {
 
     //update the people array
     const index = people.findIndex((p) => p.identity === person.identity);
-
     if (index > -1) {
       setPeople((prev) => {
         prev[index] = person;
@@ -206,6 +205,13 @@ const EditPerson = () => {
     //hide dropdown after selection
     activeRef.current.style.pointerEvents = "none";
     sexRef.current.style.pointerEvents = "none";
+  };
+
+  const doneBtnStyle = {
+    backgroundColor: person.errors.length === 0 ? "#0073cf" : "white",
+    color: person.errors.length === 0 ? "white" : "#646c7f",
+    pointerEvents: person.errors.length === 0 ? "visible" : "none",
+    border: person.errors.length === 0 ? "none" : "solid 1px #ccc",
   };
 
   return (
@@ -428,13 +434,7 @@ const EditPerson = () => {
           {/* ============ button ====================== */}
           <div>
             <div
-              style={{
-                backgroundColor:
-                  person.errors.length === 0 ? "#0073cf" : "white",
-                color: person.errors.length === 0 ? "white" : "#646c7f",
-                pointerEvents: person.errors.length === 0 ? "visible" : "none",
-                border: person.errors.length === 0 ? "none" : "solid 1px #ccc",
-              }}
+              style={doneBtnStyle}
               className={styles.submitBtn}
               onClick={() => updatePeople()}
             >

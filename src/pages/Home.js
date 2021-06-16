@@ -9,6 +9,7 @@ import { useHistory } from "react-router-dom";
 import PersonContext from "../context/PersonContext";
 import Modal from "../components/Modal";
 import { CircularProgress } from "@material-ui/core";
+import { addPeople } from "../utils/CRUDMethods";
 
 const PersonDetail = ({ data, errors }) => {
   //identifying errors on the table
@@ -297,6 +298,20 @@ const Home = () => {
     setShowModal(null);
   };
 
+  const uploadData = () => {
+    //upload only when there are no errors
+    if (extraInfo.totalErrors === 0) {
+      addPeople("upload", people, setLoading, setError);
+    }
+  };
+
+  const uploadBtnStyle = {
+    backgroundColor: extraInfo.totalErrors === 0 ? "#0073cf" : "white",
+    color: extraInfo.totalErrors === 0 ? "white" : "#646c7f",
+    pointerEvents: extraInfo.totalErrors === 0 ? "visible" : "none",
+    border: extraInfo.totalErrors === 0 ? "none" : "solid 1px #ccc",
+  };
+
   return (
     <>
       {showModal ? (
@@ -311,7 +326,7 @@ const Home = () => {
         <div className={styles.container}>
           <section className={styles.peopleInfo}>
             {/*================== file information ===================================*/}
-            <p className={styles.subTitle}>Information from the .csv File</p>
+            <p className={styles.subTitle}>Information from the *.csv File</p>
 
             {/* show only the upload button if there is no imported file */}
             {people.length > 0 ? (
@@ -356,9 +371,35 @@ const Home = () => {
 
                   {/* upload button */}
                   <div>
-                    <div className={styles.uploadBtn}>
-                      <p>STORE DATA WITHOUT ERRORS</p>
-                    </div>
+                    {extraInfo.file ? (
+                      <>
+                        {loading === "upload" ? (
+                          <div style={{ float: "right" }}>
+                            <CircularProgress color="primary" />
+                          </div>
+                        ) : (
+                          <>
+                            <div
+                              style={uploadBtnStyle}
+                              className={styles.uploadBtn}
+                              onClick={() => uploadData()}
+                            >
+                              <p>STORE DATA TO DATABASE</p>
+                            </div>
+                            {error.target === "upload" ? (
+                              <p className={styles.errorMsg}>{error.message}</p>
+                            ) : null}
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      <div
+                        onClick={() => Cleanup()}
+                        className={styles.uploadBtn}
+                      >
+                        <p>IMPORT ANOTHER FILE</p>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -396,9 +437,7 @@ const Home = () => {
                     />
                     {/* display file error message here */}
                     {error.target === "file" ? (
-                      <p style={{ color: "red", textAlign: "center" }}>
-                        {error.message}
-                      </p>
+                      <p className={styles.errorMsg}>{error.message}</p>
                     ) : null}
                   </>
                 )}

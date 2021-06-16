@@ -1,36 +1,3 @@
-//this method is to locate the errors in each person's value
-//i'll use it for counting number of found errors
-export const Validate = (key, value, errors) => {
-  if (key === "identity" || key === "age") {
-    const validateValue = /\d+/;
-    //check if the value doesnt  contain only digits
-    if (!validateValue.test(value)) errors.push({ key, value });
-  }
-
-  if (key === "firstname" || key === "surname") {
-    if (value === "" || value === null || value === undefined)
-      errors.push({ key, value });
-  }
-
-  if (key === "sex") {
-    const validateValue = /M|F/;
-    //check if the value doesnt  contain only 'M' or 'F'
-    if (!validateValue.test(value)) errors.push({ key, value });
-  }
-
-  if (key === "mobile") {
-    const validateValue = /\d{10}/;
-    //check if the value doesnt  contain only 'M' or 'F'
-    if (!validateValue.test(value)) errors.push({ key, value });
-  }
-
-  if (key === "active") {
-    const validateValue = /TRUE|FALSE/;
-    //check if the value doesnt  contain only 'TRUE' or 'FALSE'
-    if (!validateValue.test(value)) errors.push({ key, value });
-  }
-};
-
 const validateID = (key, value, people, setError) => {
   //check if the value doesn't  contain only digits
   const validateValue = /\d+/;
@@ -44,7 +11,7 @@ const validateID = (key, value, people, setError) => {
 
   //check if the value already exist
   const exists = people.find((person) => person.identity === value);
-  if (exists) {
+  if (exists > -1) {
     setError({
       target: key,
       message: `${key} already exist!`,
@@ -108,7 +75,7 @@ const validateName = (key, value, setError) => {
 };
 
 const validateSex = (key, value, setError) => {
-  const validateValue = /M|F/;
+  const validateValue = /M|F/i;
   //check if the value doesnt  contain only 'M' or 'F'
   if (!validateValue.test(value)) {
     setError({
@@ -145,7 +112,7 @@ const validateMobile = (key, value, setError) => {
 };
 
 const validateActive = (key, value, setError) => {
-  const validateValue = /TRUE|FALSE/;
+  const validateValue = /TRUE|FALSE/i;
   //check if the value doesnt  contain ten digits'
   if (!validateValue.test(value)) {
     setError({
@@ -172,4 +139,47 @@ export const ErrorFound = (key, value, people, setError) => {
   if (key === "Active") return validateActive(key, value, setError);
 
   if (key === "Age") return validateAge(key, value, setError);
+};
+
+//this method is to locate the errors in each person's value
+//i'll use it for counting number of found errors
+export const Validate = (key, value, people, errors) => {
+  if (key === "identity") {
+    const validateValue = /\d+/;
+    //check if the value doesnt  contain only digits
+    if (!validateValue.test(value)) errors.push({ key, value });
+
+    //check if the value already exist
+    const exists = people.find((person) => person.identity === value);
+    if (validateValue && exists > -1) errors.push({ key, value });
+  }
+
+  if (key === "age") {
+    const validateValue = /\d+/;
+    //check if the value doesnt  contain only digits
+    if (!validateValue.test(value)) errors.push({ key, value });
+  }
+
+  if (key === "firstname" || key === "surname") {
+    if (value === "" || value === null || value === undefined)
+      errors.push({ key, value });
+  }
+
+  if (key === "sex") {
+    const validateValue = /M|F/i;
+    //check if the value doesnt  contain only 'M' or 'F'
+    if (!validateValue.test(value)) errors.push({ key, value });
+  }
+
+  if (key === "mobile") {
+    const validateValue = /\d{10}/;
+    //check if the value doesnt  contain only 'M' or 'F'
+    if (!validateValue.test(value)) errors.push({ key, value });
+  }
+
+  if (key === "active") {
+    const validateValue = /TRUE|FALSE/i;
+    //check if the value doesnt  contain only 'TRUE' or 'FALSE'
+    if (!validateValue.test(value)) errors.push({ key, value });
+  }
 };

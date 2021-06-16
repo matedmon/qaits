@@ -29,6 +29,11 @@
   transform: translate(-50%, -50%);
 }
 
+.btnContainer .errorMsg {
+  color: red;
+  text-align: center;
+}
+
 .peopleInfo .subTitle {
   margin: 0 0 40px 0;
 }
@@ -69,6 +74,7 @@
   margin: 0 12px 0 0;
 }
 /* ======== upload button ========== */
+
 .uploadBtn {
   display: flex;
   align-items: center;
@@ -77,9 +83,16 @@
   width: 50%;
   background-color: #0073cf;
   color: white;
-  float: right;
   border-radius: 2px;
   cursor: pointer;
+  float: right;
+}
+
+.fileGrid .errorMsg {
+  color: red;
+  display: block;
+  width: 50%;
+  float: right;
 }
 
 .uploadBtn p {

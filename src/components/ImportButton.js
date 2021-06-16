@@ -7,7 +7,7 @@ import PersonContext from "../context/PersonContext";
 const UploadButton = (props) => {
   const { setError, setLoading } = props;
 
-  const { setPeople, setExtraInfo } = useContext(PersonContext);
+  const { people, setPeople, setExtraInfo } = useContext(PersonContext);
 
   const getFile = (files) => {
     const file = files[0];
@@ -23,6 +23,7 @@ const UploadButton = (props) => {
       const allLines = e.target.result.split(/\r\n|\n/); //all lines from the file
       const firstLine = allLines[0].split(/,/);
 
+      //get first line (headers of the table)
       setExtraInfo((prev) => {
         return {
           ...prev,
@@ -47,7 +48,7 @@ const UploadButton = (props) => {
           };
 
           //validate the value of the current attribute
-          Validate(firstLine[b].toLowerCase(), line[b], errors);
+          Validate(firstLine[b].toLowerCase(), line[b], people, errors);
         }
         //store the errors of the current person
         person = {
