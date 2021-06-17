@@ -89,7 +89,7 @@ export const editPerson = (
     });
 };
 
-export const addPeople = (key, people, setLoading, setError) => {
+export const addPeople = (key, people, routeHistory, setLoading, setError) => {
   setLoading(key); //show progressbar
   setError({
     message: null,
@@ -108,6 +108,8 @@ export const addPeople = (key, people, setLoading, setError) => {
     .then(function (response) {
       console.log(response.data);
       setLoading(null);
+      //refresh page
+      routeHistory.go(0);
     })
     .catch(function (error) {
       setLoading(null);

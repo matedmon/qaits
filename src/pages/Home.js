@@ -99,7 +99,7 @@ const Home = () => {
   const uploadData = () => {
     //upload only when there are no errors
     if (extraInfo.totalErrors === 0) {
-      addPeople("upload", people, setLoading, setError);
+      addPeople("upload", people, routeHistory, setLoading, setError);
     }
   };
 
