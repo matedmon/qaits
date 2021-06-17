@@ -152,12 +152,14 @@ const EditPerson = () => {
       //NB: person.errors() contains all the errors found on this person's details
       //so now that the error is resolved, there's no need to mark this value as error.
 
-      setPerson((prev) => {
-        return {
-          ...prev,
-          errors: prev.errors.splice(index, 1),
-        };
-      });
+      person.errors.splice(index, 1);
+
+      // setPerson((prev) => {
+      //   return {
+      //     ...prev,
+      //     errors: prev.errors.splice(index, 1),
+      //   };
+      // });
     }
   };
 
