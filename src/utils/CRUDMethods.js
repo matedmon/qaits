@@ -47,7 +47,7 @@ export const editPerson = (
   });
 
   axios
-    .patch(`http://localhost:5000/person/update/${id}`, {
+    .patch(`https://qaits.herokuapp.com/person/update/${id}`, {
       [key.toLowerCase()]: value,
     })
     .then(function (response) {
@@ -102,7 +102,7 @@ export const addPeople = (key, people, setLoading, setError) => {
   }
 
   axios
-    .post(`http://localhost:5000/person/addAll`, {
+    .post(`https://qaits.herokuapp.com/person/addAll`, {
       people: JSON.stringify(people),
     })
     .then(function (response) {
@@ -124,7 +124,7 @@ export const getPeople = (key, setPeople, setLoading, setError) => {
   });
 
   axios
-    .get(`http://localhost:5000/person/getAll`)
+    .get(`https://qaits.herokuapp.com/person/getAll`)
     .then(function (response) {
       setLoading(null);
 

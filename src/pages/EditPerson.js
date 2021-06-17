@@ -158,7 +158,6 @@ const EditPerson = () => {
           errors: prev.errors.splice(index, 1),
         };
       });
-      console.log(person.error);
     }
   };
 

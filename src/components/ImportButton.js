@@ -4,6 +4,8 @@ import styles from "../styles/ImportButton.module.css";
 import { Validate } from "../utils/ValidateData";
 import PersonContext from "../context/PersonContext";
 
+//for more info visit: https://react-dropzone.js.org/
+
 const UploadButton = (props) => {
   const { setError, setLoading } = props;
 

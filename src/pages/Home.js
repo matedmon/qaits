@@ -56,9 +56,10 @@ const Home = () => {
       : person.firstname.toLowerCase().includes(searchText);
   });
 
-  //will be used to remove the imported file
+  //will be used to remove the imported file or data from the database
   const Cleanup = () => {
     setPeople([]);
+
     setExtraInfo({
       totalErrors: 0,
       file: null,
@@ -125,7 +126,7 @@ const Home = () => {
             {/*================== file information ===================================*/}
             <p className={styles.subTitle}>Information from the *.csv File</p>
 
-            {/* show only the upload button if there is no imported file */}
+            {/* show only the upload button if there is no imported file or data from the database */}
             {people.length > 0 ? (
               <>
                 <div className={styles.fileGrid}>
@@ -157,7 +158,7 @@ const Home = () => {
                           />
                         </div>
 
-                        {/* how to show people with errors messages */}
+                        {/* 'how to show people with errors' text message */}
                         {searchText === "errors" ? (
                           <em style={{ color: "#646c7f", fontSize: 14 }}>
                             Click the back icon to see all people.
@@ -170,11 +171,14 @@ const Home = () => {
                       </>
                     ) : null}
                   </div>
+
                   <div></div>
-                  {/* upload button */}
+
+                  {/* buttons for importing data */}
                   <div>
                     {extraInfo.file ? (
                       <>
+                        {/* the progressbar replaces both error message and the 'upload button' */}
                         {loading === "upload" ? (
                           <div
                             style={{
@@ -205,7 +209,7 @@ const Home = () => {
                         onClick={() => Cleanup()}
                         className={styles.uploadBtn}
                       >
-                        <p>IMPORT ANOTHER FILE</p>
+                        <p>IMPORT *.CSV FILE</p>
                       </div>
                     )}
                   </div>

@@ -3,6 +3,7 @@ import { Scrollbars } from "react-custom-scrollbars-2";
 import SearchInput from "../../components/SearchInput";
 import styles from "../../styles/Home.module.css";
 
+// table headers
 const Headers = ({ extraInfo }) => {
   return (
     <tr>
@@ -23,6 +24,7 @@ const Headers = ({ extraInfo }) => {
   );
 };
 
+// table detail
 const PersonDetail = ({ data, errors }) => {
   //details from the database
   if (!errors) return <span>{data}</span>;
@@ -46,21 +48,24 @@ const PersonDetail = ({ data, errors }) => {
   );
 };
 
-//table rows
 const PeopleDetails = (props) => {
   const { filteredPeople, routeHistory, setShowModal, extraInfo } = props;
   return (
     <>
+      {/* table rows */}
       {filteredPeople.map((person, index) => {
         return (
           <tr key={index}>
+            {/* table details (columns) */}
             {Object.entries(person).map(([key, value], i) => {
-              // this is to not display 'errors' array in each person object
+              //making sure person.errors is not displayed
+              //person object comes with extra info from the database which doesn't have to be displayed
               if (key === "errors") return <Fragment key={i}></Fragment>;
               if (key === "_id") return <Fragment key={i}></Fragment>;
               if (key === "updatedAt") return <Fragment key={i}></Fragment>;
               if (key === "createdAt") return <Fragment key={i}></Fragment>;
               if (key === "__v") return <Fragment key={i}></Fragment>;
+
               return (
                 <td key={i}>
                   <PersonDetail data={value} errors={person.errors} />
@@ -71,7 +76,7 @@ const PeopleDetails = (props) => {
             {/* only show delete and edit button when there's an imported file */}
             {extraInfo.file ? (
               <>
-                {/* action buttons */}
+                {/* delete and edit buttons */}
                 <td>
                   <div className={styles.actionBtns}>
                     <p

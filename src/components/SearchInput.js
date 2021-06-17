@@ -9,7 +9,7 @@ const SearchInput = ({ setSearchText }) => {
           e.preventDefault();
           setSearchText(e.target.value.toLowerCase());
         }}
-        placeholder="Search a name..."
+        placeholder="Search  first name..."
       />
     </div>
   );

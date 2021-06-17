@@ -15,6 +15,7 @@ const MobileLayout = (props) => {
     extraInfo,
   } = props;
 
+  //open dropdown menu
   const openMenu = (id) => {
     setViewDetails((prev) => {
       if (prev === id) return null;
@@ -24,9 +25,12 @@ const MobileLayout = (props) => {
 
   return (
     <div className={styles.mobile}>
+      {/* search input  */}
       <div style={{ position: "relative" }}>
         <SearchInput setSearchText={setSearchText} />
       </div>
+
+      {/* all people list */}
       <div>
         <Scrollbars universal={true} autoHide autoHeight autoHeightMax={500}>
           {filteredPeople.map((person, index) => {
@@ -41,6 +45,8 @@ const MobileLayout = (props) => {
                   </p>
                   <ArrowDropDown fontSize="small" />
                 </div>
+
+                {/* dropdown menu */}
                 <div
                   style={{
                     display: viewDetails === person.identity ? "block" : "none",
@@ -75,9 +81,10 @@ const MobileLayout = (props) => {
                     </div>
                   ) : null}
 
+                  {/* dropdown items */}
                   {Object.entries(person).map(([key, value], i) => {
-                    // this is to not display 'errors' array in each person object
-                    if (key === "errors") return <Fragment key={i}></Fragment>;
+                    //making sure person.errors is not displayed
+                    //person object comes with extra info from the database which doesn't have to be displayed
                     if (key === "errors") return <Fragment key={i}></Fragment>;
                     if (key === "_id") return <Fragment key={i}></Fragment>;
                     if (key === "updatedAt")
