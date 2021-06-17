@@ -89,12 +89,12 @@ const validateSex = (key, value, setError) => {
 };
 
 const validateMobile = (key, value, setError) => {
-  const validateValue = /\d{10}/;
+  const validateValue = /^0\d{9}$/;
   //check if the value doesnt  contain ten digits'
   if (!validateValue.test(value)) {
     setError({
       target: key,
-      message: `${key} number should have 10 digits only!`,
+      message: `${key} should be 10 digits that start with '0'!`,
     });
     return true;
   }
@@ -172,8 +172,8 @@ export const Validate = (key, value, people, errors) => {
   }
 
   if (key === "mobile") {
-    const validateValue = /\d{10}/;
-    //check if the value doesnt  contain only 'M' or 'F'
+    const validateValue = /^0\d{9}$/;
+    //check if the value 10 digits that starts with 0
     if (!validateValue.test(value)) errors.push({ key, value });
   }
 
