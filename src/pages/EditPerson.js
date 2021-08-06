@@ -215,11 +215,18 @@ const EditPerson = () => {
     border: person.errors.length === 0 ? "none" : "solid 1px #ccc",
   };
 
+  const errorColor = (key) => {
+    const index = person.errors.findIndex((err) => err.key === key);
+    console.log("index " + index);
+    if (index > -1) return true;
+    return false;
+  };
+
   return (
     <div className={styles.content}>
       <div className={styles.container}>
         <header>
-          <h1 className={styles.title}>Edit Person's details</h1>
+          <h1 className={styles.title}>Edit Details</h1>
         </header>
 
         <section className={styles.form}>
@@ -236,6 +243,11 @@ const EditPerson = () => {
               defaultValue={person.identity}
               disabled={edit === "Identity" ? false : true}
               onChange={handleInput}
+              style={{
+                border: errorColor("identity")
+                  ? "1px solid red"
+                  : "1px solid #ccc",
+              }}
             />
             <ActionButtons
               success={success}
@@ -260,6 +272,11 @@ const EditPerson = () => {
               defaultValue={person.firstname}
               disabled={edit === "Firstname" ? false : true}
               onChange={handleInput}
+              style={{
+                border: errorColor("firstname")
+                  ? "1px solid red"
+                  : "1px solid #ccc",
+              }}
             />
             <ActionButtons
               success={success}
@@ -284,6 +301,11 @@ const EditPerson = () => {
               defaultValue={person.surname}
               disabled={edit === "Surname" ? false : true}
               onChange={handleInput}
+              style={{
+                border: errorColor("surname")
+                  ? "1px solid red"
+                  : "1px solid #ccc",
+              }}
             />
             <ActionButtons
               success={success}
@@ -311,6 +333,9 @@ const EditPerson = () => {
               defaultValue={person.age}
               disabled={edit === "Age" ? false : true}
               onChange={handleInput}
+              style={{
+                border: errorColor("age") ? "1px solid red" : "1px solid #ccc",
+              }}
             />
             <ActionButtons
               success={success}
@@ -336,6 +361,11 @@ const EditPerson = () => {
               defaultValue={person.mobile}
               disabled={edit === "Mobile" ? false : true}
               onChange={handleInput}
+              style={{
+                border: errorColor("mobile")
+                  ? "1px solid red"
+                  : "1px solid #ccc",
+              }}
             />
             <ActionButtons
               success={success}
@@ -361,10 +391,18 @@ const EditPerson = () => {
               className={styles.dropdownWrapper}
               ref={sexRef}
             >
-              <div className={styles.dropdownItem}>
+              <div
+                style={{
+                  border: errorColor("sex")
+                    ? "1px solid red"
+                    : "1px solid #ccc",
+                }}
+                className={styles.dropdownItem}
+              >
                 <p>{select && edit === "Sex" ? select : person.sex}</p>
                 <ArrowDropDown fontSize="small" />
               </div>
+
               <div className={styles.dropdown}>
                 <div
                   className={styles.dropdownItem}
@@ -403,10 +441,18 @@ const EditPerson = () => {
               className={styles.dropdownWrapper}
               ref={activeRef}
             >
-              <div className={styles.dropdownItem}>
+              <div
+                className={styles.dropdownItem}
+                style={{
+                  border: errorColor("active")
+                    ? "1px solid red"
+                    : "1px solid #ccc",
+                }}
+              >
                 <p>{select && edit === "Active" ? select : person.active}</p>
                 <ArrowDropDown fontSize="small" />
               </div>
+
               <div className={styles.dropdown}>
                 <div
                   className={styles.dropdownItem}

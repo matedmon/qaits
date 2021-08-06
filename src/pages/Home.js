@@ -106,22 +106,24 @@ const Home = () => {
   const uploadBtnStyle = {
     backgroundColor: extraInfo.totalErrors === 0 ? "#0073cf" : "white",
     color: extraInfo.totalErrors === 0 ? "white" : "#646c7f",
-    pointerEvents: extraInfo.totalErrors === 0 ? "visible" : "none",
     border: extraInfo.totalErrors === 0 ? "none" : "solid 1px #ccc",
+    borderRadius: 4,
+    pointerEvents: "none",
+    // pointerEvents: extraInfo.totalErrors === 0 ? "visible" : "none",
   };
 
   return (
-    <>
-      {showModal ? (
-        <Modal
-          setShowModal={setShowModal}
-          message="Are you sure you want to delete this person?"
-          action={removePerson}
-          showModal={showModal}
-        />
-      ) : null}
+    <div>
       <div className={styles.content}>
         <div className={styles.container}>
+          {showModal ? (
+            <Modal
+              setShowModal={setShowModal}
+              message="Are you sure you want to delete this row's details?"
+              action={removePerson}
+              showModal={showModal}
+            />
+          ) : null}
           <section className={styles.peopleInfo}>
             {/*================== file information ===================================*/}
             <p className={styles.subTitle}>Information from the *.csv File</p>
@@ -259,7 +261,7 @@ const Home = () => {
           </section>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
